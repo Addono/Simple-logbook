@@ -1,0 +1,95 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{logbook}
+  [
+  2016/02/22 v0.01 Created LaTeX package for my own purpose
+  2016/02/23 v0.02 Added support for subtotals.
+  2016/02/24 v0.03 Using longtables for tables in stead of tabular
+  ]
+
+\RequirePackage{longtable}
+\RequirePackage{babel} 			% Make sure babel is included.
+\RequirePackage{fp}				% Get ready to do some calculation.
+\RequirePackage{nth}			% Let's format numbers.
+\RequirePackage{datetime2}		% Let's get the month names.
+\DTMsetup{useregional}			% Set the region.
+
+\newcounter{time}				% Will store the total time of the current logbook.
+\newcounter{subTime}			% Will store the subtotal time of the current logbook (total of time since last last subtotal row was called).
+
+%  Converts a time of just minutes to hours and minutes.
+%  @input	Time as amount of minutes
+%  @output	Time as number of hours and minutes.
+\newcommand{\minToHM}[1]{
+	 % Calculate the amount of hours and minutes.
+	\FPeval{\hours}{trunc(#1/60, 0)}
+	\FPeval{\minutes}{round(#1 - \hours * 60, 0)	}
+    
+    % Return the amount of hours.
+	\FPiflt{0}{\hours} % Check if hours is larger than 0.
+		\hours h
+	\else
+		\qquad
+	\fi
+    
+    % Return the amount of minutes.
+	\FPiflt{0}{\minutes}
+		 \minutes m
+	\fi
+}
+
+%  Adds an entry to the logbook
+%  @input	The year (default 2016)
+%  @input	The month
+%  @input	The day of the month
+%  @input	The time spend
+%  @input	A description
+%  @output  Adds a row to the logbook table.
+\newcommand{\logEntry}[5][2016]{
+	\vphantom{
+    \addtocounter{time}{#4}
+    \addtocounter{subTime}{#4}
+    }
+    \nth{#3} of \DTMenglishmonthname{#2} & \minToHM{#4} & {#5} \\
+}
+
+%  Adds a row which shows the total.
+\newcommand{\logTotal}{
+	\large{\textbf{Total}} & \minToHM{\arabic{time}} & \\
+}
+
+%  Adds a row which shows the subtotal (total time since previous subtotal.
+\newcommand{\logSubtotal}[1]{
+	% Add subtotal row.
+	\hline
+	\textbf{Subtotal} & \minToHM{\arabic{subTime}} & \textbf{#1}
+    \setcounter{subTime}{0} % Reset the counter of the subtotal..
+	\\ \hline % Insert a horizontal line
+}
+
+%  Initializes the logbook table environment.
+%  @input	Format of the table (default: l|r|p{7cm})
+%  @input	Name of the table.
+%  @output  Environment to be used in combination with \logEntry
+\newenvironment{logbookTable}[2][r|r|p{7cm}]{
+	\def\logName{#2} % Define the name
+    \setcounter{time}{0}
+    \setcounter{subTime}{0}
+    % Open the table
+	\logbookBeginTable{#1}
+	}{
+	\logbookEndTable
+}
+
+% Starts a new log table.
+% @input	The format of the table.
+% @output	The start and index row of a table.
+\newcommand{\logbookBeginTable}[1]{
+	\begin{longtable}{#1} % 
+	\textbf{Date} & \textbf{Time spend} & \textbf{What} \\ \hline
+}
+
+% Closes a log table.
+% @output	Closes a log table.
+\newcommand{\logbookEndTable}{
+	\end{longtable}
+}

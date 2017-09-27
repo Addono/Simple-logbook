@@ -1,0 +1,23 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[english]{babel}
+\usepackage{logbook}
+
+\begin{document}
+	\begin{logbookTable}{table-name}
+		%\logEntry{Month}{Day}{# minutes}{Description}
+		
+		% Initial phase
+		\logEntry{02}{02}{120}{Did something.}
+		\logEntry{02}{04}{120}{And more things.}
+		\logEntry{02}{05}{140}{And even more.}
+		\logSubtotal{Initial phase}
+		
+		% Second phase
+		\logEntry{02}{14}{50}{Started on the second phase.}
+		\logEntry{02}{16}{60}{Did things.}
+		\logEntry{02}{19}{70}{Made a logbook package because I was bored.}
+		\logSubtotal{Second phase}
+		\logTotal
+	\end{logbookTable}
+\end{document}

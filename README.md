@@ -7,6 +7,12 @@ Start by copying `logbook.sty` and `nth.sty` to the root of your LaTeX project.
 
 *Note: `nth` might be optional, if your package manager includes it, however we observed that it generally isn't.*
 
+First, import the package, this should probably be somewhere at the top of your document:
+```tex
+\usepackage{logbook}
+```
+
+Then, in the `document` environment you can use the `logbookTable` environment as such:
 ```tex
 \begin{logbookTable}{table-name}
   %\logEntry{Month}{Day}{# minutes}{Description}
